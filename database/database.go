@@ -25,9 +25,9 @@ func ConnectDB() {
 	log.Println("Connected to the database successfully")
 	db.Logger = logger.Default.LogMode(logger.Info)
 
-	// TODO: db migrations
 	db.AutoMigrate(&models.User{})
 
 	Database = DBInstance{Db: db}
+	
 	
 }
