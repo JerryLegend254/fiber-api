@@ -2,7 +2,6 @@ package routes
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/JerryLegend254/fiber-api/database"
 	"github.com/JerryLegend254/fiber-api/models"
@@ -85,8 +84,6 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err1.Error())
 	}
 
-	fmt.Printf("Updating the user with id %d", ID)
-
 	type UpdateUser struct {
 		FirstName string `json:"first_name"`
 		LastName  string `json:"last_name"`
@@ -114,4 +111,23 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(responseUser)
 
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+	var user models.User
+
+	if err1 := findUser(ID, &user); err1 != nil {
+		return c.Status(400).JSON(err1.Error())
+	}
+
+	if err := database.Database.Db.Delete(&user).Error; err != nil{
+		return c.Status(404).JSON(err.Error())
+	}
+
+	return c.Status(200).JSON("Deleted user successfully")
 }

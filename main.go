@@ -20,6 +20,7 @@ func main() {
 	app.Get("/users", routes.GetUsers)
 	app.Get("/users/:id", routes.GetUser)
 	app.Put("/users/:id", routes.UpdateUser)
+	app.Delete("/users/:id", routes.DeleteUser)
 
     log.Fatal(app.Listen(":3000"))
 }
