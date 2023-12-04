@@ -2,6 +2,7 @@ package routes
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/JerryLegend254/fiber-api/database"
 	"github.com/JerryLegend254/fiber-api/models"
@@ -65,6 +66,49 @@ func GetUser(c *fiber.Ctx) error {
 	if err1 := findUser(ID, &user); err1 != nil {
 		return c.Status(400).JSON(err1.Error())
 	}
+
+	responseUser := CreateResUser(user)
+
+	return c.Status(200).JSON(responseUser)
+
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+	var user models.User
+
+	if err1 := findUser(ID, &user); err1 != nil {
+		return c.Status(400).JSON(err1.Error())
+	}
+
+	fmt.Printf("Updating the user with id %d", ID)
+
+	type UpdateUser struct {
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+	}
+
+	var updateData UpdateUser
+
+	if err := c.BodyParser(&updateData); err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+
+	if len(updateData.FirstName) == 0 {
+		user.LastName = updateData.LastName
+	} else if len(updateData.LastName) == 0 {
+		user.FirstName = updateData.FirstName
+
+	} else {
+		user.FirstName = updateData.FirstName
+		user.LastName = updateData.LastName
+	}
+
+	database.Database.Db.Save(&user)
 
 	responseUser := CreateResUser(user)
 

@@ -19,6 +19,7 @@ func main() {
 	app.Post("/users", routes.CreateUser)
 	app.Get("/users", routes.GetUsers)
 	app.Get("/users/:id", routes.GetUser)
+	app.Put("/users/:id", routes.UpdateUser)
 
     log.Fatal(app.Listen(":3000"))
 }
